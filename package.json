@@ -1,0 +1,21 @@
+{
+  "name": "css-sibling-count",
+  "version": "0.1.0",
+  "description": "Demo for the CSS sibling-count() and sibling-index() tree-counting functions",
+  "license": "MIT",
+  "author": "",
+  "dependencies": {
+    "astro": "^7.3.2",
+    "css-starter": "https://github.com/jordilopez/css-starter/archive/refs/tags/v0.4.0.tar.gz"
+  },
+  "devDependencies": {
+    "vitest": "^5.0.1"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "vitest run"
+  },
+  "type": "module"
+}

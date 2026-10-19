@@ -1,0 +1,90 @@
+---
+import 'css-starter';
+import '../styles/demo.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = 'A demo of the CSS sibling-count() and sibling-index() tree-counting functions, Baseline 2026.',
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <script is:inline>
+      (function () {
+        try {
+          var supported = CSS.supports('width', 'calc(sibling-count() * 1px)');
+          document.documentElement.dataset.siblingCount = supported
+            ? 'supported'
+            : 'unsupported';
+        } catch (e) {
+          document.documentElement.dataset.siblingCount = 'unsupported';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <p class="site-header__tag">CSS Values and Units Level 5</p>
+      <h1 class="site-header__title">{title}</h1>
+      <p class="site-header__desc">{description}</p>
+    </header>
+
+    <div id="sibling-notice" class="callout callout--warning" role="status" hidden>
+      <span class="callout__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4.5 21h15a2 2 0 0 0 1.73-3Z" />
+          <path d="M12 9v4M12 17h.01" />
+        </svg>
+      </span>
+      <div class="callout__content">
+        <p class="callout__title">Older browser.</p>
+        <p class="callout__body">
+          <code>sibling-count()</code> and <code>sibling-index()</code> reached
+          Baseline in 2026 and ship in{' '}
+          <a href="https://caniuse.com/wf-sibling-count">Chrome and Edge 138+,
+          Firefox 154+ and Safari 26.2+</a>. This browser doesn't implement
+          them, so every <code>sibling-count()</code> /{' '}
+          <code>sibling-index()</code> declaration is dropped and you're seeing
+          the plain fallback rosters. Open this page in a current browser to see
+          the real thing.
+        </p>
+      </div>
+    </div>
+
+    <main class="site-main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <h2>Resources</h2>
+      <ul>
+        <li><a href="https://caniuse.com/wf-sibling-count">caniuse: sibling-count() and sibling-index()</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/sibling-count">MDN: sibling-count()</a></li>
+        <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/sibling-index">MDN: sibling-index()</a></li>
+        <li><a href="https://drafts.csswg.org/css-values-5/#tree-counting">CSS Values and Units Module Level 5 — W3C</a></li>
+      </ul>
+    </footer>
+
+    <script is:inline>
+      (function () {
+        var notice = document.getElementById('sibling-notice');
+        if (
+          notice &&
+          document.documentElement.dataset.siblingCount === 'unsupported'
+        ) {
+          notice.hidden = false;
+        }
+      })();
+    </script>
+  </body>
+</html>

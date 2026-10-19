@@ -1,0 +1,25 @@
+---
+// A roster of sibling items. Every `.item` is a direct child of the same
+// `.roster__list`, so sibling-count() and sibling-index() resolve against
+// that list. Two instances are rendered with different lengths so the same
+// rule can be seen adapting to a different count.
+interface Props {
+  /** Number of sibling items to render. */
+  count: number;
+  /** Visible label describing the roster, e.g. "5 siblings". */
+  label: string;
+}
+
+const { count, label } = Astro.props;
+const items = Array.from({ length: count }, (_, i) => i + 1);
+---
+<div class="roster">
+  <p class="roster__label">{label}</p>
+  <ol class="roster__list" aria-label={label}>
+    {items.map((n) => (
+      <li class="item">
+        <span class="item__num">{n}</span>
+      </li>
+    ))}
+  </ol>
+</div>
