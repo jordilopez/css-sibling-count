@@ -1,0 +1,226 @@
+/* ==========================================================================
+   Demo styles — deliberately unlayered so they win over css-starter.* layers
+   ========================================================================== */
+
+/* css-starter's `.callout` sets `display: flex`, which beats the UA
+   stylesheet's `[hidden] { display: none }`. The notice is the only element
+   that combines `callout` with `hidden`, so this selector (specificity
+   0,2,0) restores the hidden-equivalent without !important. */
+.callout[hidden] {
+  display: none;
+}
+
+body {
+  font-family: var(--ff-sans);
+  color: var(--c-text);
+  background: var(--c-bg);
+  max-width: 75rem;
+  margin-inline: auto;
+  padding-inline: var(--sp-4, 1.5rem);
+}
+
+/* --- header --- */
+
+.site-header {
+  padding-block: var(--sp-6, 3rem) var(--sp-4, 1.5rem);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.site-header__tag {
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-primary);
+  font-weight: var(--fw-semibold);
+  margin: 0;
+}
+
+.site-header__title {
+  font-size: var(--fs-2xl);
+  margin: var(--sp-2, 0.5rem) 0;
+}
+
+.site-header__desc {
+  color: var(--c-text-secondary);
+  margin: 0;
+}
+
+/* --- shared example sections --- */
+
+.site-main > section {
+  padding-block: var(--sp-6, 3rem);
+}
+
+.example__title {
+  font-size: var(--fs-xl);
+  margin: 0 0 var(--sp-2, 0.5rem);
+}
+
+.example__desc {
+  color: var(--c-text-secondary);
+  margin: 0 0 var(--sp-4, 1.5rem);
+  max-width: 65ch;
+}
+
+.example__pre {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-sm);
+  background: var(--c-bg-subtle);
+  border: 1px solid var(--c-border-light);
+  border-radius: var(--br-md, 8px);
+  padding: var(--sp-3, 1rem) var(--sp-4, 1.5rem);
+  margin: 0 0 var(--sp-4, 1.5rem);
+  overflow-x: auto;
+  line-height: var(--lh-base);
+}
+
+/* --- example picker: page-level spacing only; pills come from css-starter --- */
+
+.picker {
+  margin-block-end: var(--sp-4, 1.5rem);
+}
+
+/* --- per-example title / description / code: only the selected one shows --- */
+
+.ex-meta {
+  display: none;
+}
+
+body:has(#ex-equal:checked) .ex-meta--equal,
+body:has(#ex-stagger:checked) .ex-meta--stagger,
+body:has(#ex-hue:checked) .ex-meta--hue,
+body:has(#ex-grow:checked) .ex-meta--grow,
+body:has(#ex-pyramid:checked) .ex-meta--pyramid,
+body:has(#ex-deck:checked) .ex-meta--deck {
+  display: block;
+}
+
+/* --- rosters -----------------------------------------------------------
+   Two rosters of different lengths are rendered. They share the same
+   `.item` class, so a single example rule applies to both and the effect
+   of sibling-count() adapting to 5 vs 8 siblings is visible side by side.
+   The base rules below are what an unsupported browser falls back to. */
+
+.rosters {
+  display: grid;
+  gap: var(--sp-5, 1.5rem);
+}
+
+.roster__label {
+  margin: 0 0 var(--sp-2, 0.5rem);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-text-muted);
+}
+
+.roster__list {
+  --gap: var(--sp-3, 0.75rem);
+
+  display: flex;
+  align-items: flex-end;
+  gap: var(--gap);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 3rem;
+  min-block-size: 3rem;
+  padding: var(--sp-2, 0.5rem);
+  background: var(--c-bg-subtle);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md, 6px);
+  color: var(--c-text-secondary);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-sm);
+}
+
+/* --- per-example rules, driven by the picker via :has() ---
+   Each example drives a different value axis on the same `.item` elements. */
+
+/* 1. equal width — split the row by the count, gaps included */
+body:has(#ex-equal:checked) .item {
+  inline-size: calc(
+    (100% - (sibling-count() - 1) * var(--gap)) / sibling-count()
+  );
+}
+
+/* 2. stagger — animation delay derived from the index */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+}
+body:has(#ex-stagger:checked) .item {
+  animation: rise 0.5s ease-out backwards;
+  animation-delay: calc((sibling-index() - 1) * 120ms);
+}
+
+/* 3. hue ramp — 360° spread across however many siblings exist */
+body:has(#ex-hue:checked) .item {
+  background: hsl(
+    calc(360deg / sibling-count() * (sibling-index() - 1)) 70% 60%
+  );
+  border-color: transparent;
+  color: #14161a;
+}
+
+/* 4. grow — flex-grow proportional to the index */
+body:has(#ex-grow:checked) .item {
+  flex-grow: sibling-index();
+  flex-basis: 2rem;
+}
+
+/* 5. pyramid — min(index, count - index + 1) rises to the middle */
+body:has(#ex-pyramid:checked) .item {
+  block-size: calc(
+    min(sibling-index(), sibling-count() - sibling-index() + 1) * 1.5rem + 2rem
+  );
+  align-self: end;
+}
+
+/* 6. deck — z-index from the index, overlapping via a negative margin */
+body:has(#ex-deck:checked) .item {
+  position: relative;
+  margin-inline-start: -1.5rem;
+  z-index: sibling-index();
+  box-shadow: var(--shadow-md);
+}
+body:has(#ex-deck:checked) .item:first-child {
+  margin-inline-start: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:has(#ex-stagger:checked) .item {
+    animation: none;
+  }
+}
+
+/* --- fallback for browsers without the tree-counting functions ----------
+   Every declaration that uses sibling-count() / sibling-index() is invalid
+   and dropped, so the rosters keep their base styling. We only make sure
+   they stay legible and wrap instead of overflowing. */
+
+@supports not (width: calc(sibling-count() * 1px)) {
+  .roster__list {
+    flex-wrap: wrap;
+  }
+}
+
+/* --- footer --- */
+
+.site-footer {
+  border-top: 1px solid var(--c-border);
+  margin-top: var(--sp-6, 3rem);
+  padding-block: var(--sp-5, 2.5rem);
+  color: var(--c-text-secondary);
+  font-size: var(--fs-sm);
+}

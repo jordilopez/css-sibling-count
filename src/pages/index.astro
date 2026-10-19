@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Roster from '../components/Roster.astro';
+import { EXAMPLES } from '../lib/examples';
+---
+<BaseLayout title="CSS sibling-count() and sibling-index() Demo">
+  <section class="playground">
+    <fieldset class="picker">
+      <legend class="sr-only">Choose an example</legend>
+      {EXAMPLES.map((ex, i) => (
+        <label class="picker__option" for={`ex-${ex.id}`}>
+          <input
+            type="radio"
+            name="example"
+            id={`ex-${ex.id}`}
+            value={ex.id}
+            checked={i === 0}
+          />
+          <span>{ex.label}</span>
+        </label>
+      ))}
+    </fieldset>
+
+    {EXAMPLES.map((ex, i) => (
+      <div class:list={['ex-meta', `ex-meta--${ex.id}`]} hidden={i !== 0}>
+        <h2 class="example__title">{i + 1}. {ex.title}</h2>
+        <p class="example__desc">{ex.description}</p>
+        <pre class="example__pre"><code>{ex.code}</code></pre>
+      </div>
+    ))}
+
+    <div class="rosters">
+      <Roster count={5} label="5 siblings" />
+      <Roster count={8} label="8 siblings" />
+    </div>
+  </section>
+</BaseLayout>
